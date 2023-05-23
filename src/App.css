@@ -2,7 +2,7 @@
   text-align: center;
   margin-top: 20px;
 }
-button{
+button {
   padding: 10px;
   font-size: large;
   background-color: blue;
@@ -14,9 +14,12 @@ button{
   text-align: center;
   color: red;
 } */
-.signIn-signOut img{
+.signIn-signOut img {
   width: 20%;
 }
-.form-section{
+.form-section {
   text-align: center;
+}
+.fb-button {
+  margin-top: 20px;
 }
