@@ -2,15 +2,19 @@ import './App.css';
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from './firebase.config';
 import { useState } from 'react';
-import { GoogleAuthProvider } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 function App() {
+
+  const [newUser, setNewUser] = useState(false);
+
   const [user, setUser] = useState({
     isSignIn: false,
     name: '',
     email: '',
     password: '',
-    photo: ''
+    photo: '',
+    
   });
 
   const handleClick = () => {
@@ -25,8 +29,8 @@ function App() {
         })
       })
       .catch((error) => {
-        console.log(error);
-        console.log(error.message);
+        // console.log(error);
+        // console.log(error.message);
       })
   };
   const handleSignOut = () => {
@@ -36,25 +40,62 @@ function App() {
           isSignIn: false,
           name: '',
           email: '',
-          photo: ''
+          photo: '',
+          error: '',
+          success: false,
         })
       })
       .catch((error) => {
-        console.log(error);
-        console.log(error.message);
+        // console.log(error);
+        // console.log(error.message);
       })
   };
 
   const handleSubmit = (event) => {
-    console.log(user.email, user.password);
-    if (user.email && user.password) {
-      console.log('submitting')
+      console.log(user.email, user.password);
+    if (newUser && user.email && user.password) {
+      // console.log('submitted successfully');
+      createUserWithEmailAndPassword(auth, user.email, user.password)
+        .then((res) => {
+         const newUserInfo = { ...user };
+            newUserInfo.success = true;
+            newUserInfo.error = '';
+            setUser(newUserInfo);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          const newUserInfo = { ...user };
+            newUserInfo.error = errorCode;
+            newUserInfo.success = false;
+            setUser(newUserInfo);
+  });
+
+    };
+    if (!newUser && user.email && user.password) {
+      signInWithEmailAndPassword(auth, user.email, user.password)
+        .then((res) => {
+        const newUserInfo = { ...user };
+            newUserInfo.success = true;
+            newUserInfo.error = '';
+            setUser(newUserInfo);
+        })
+      
+        .catch((error) => {
+               const errorCode = error.code;
+          const errorMessage = error.message;
+          const newUserInfo = { ...user };
+            newUserInfo.error = errorCode;
+            newUserInfo.success = false;
+            setUser(newUserInfo);
+          
+        });
     }
-    event.preventDefault();
+            event.preventDefault();
   }
 
   const handleBlur = (event) => {
-    console.log(event.target.name, event.target.value);
+    // console.log(event.target.name, event.target.value);
     let isFieldCheck = true;
     if (event.target.name === 'email') {
         isFieldCheck = /\S+@\S+\.\S+/.test(event.target.value);
@@ -90,19 +131,22 @@ function App() {
       </div> <br /><br />
 
       <div className='form-section'>
-        <h4>Name: {user.name}</h4>
-        <h4>Email: {user.email}</h4>
-        <h4> Password : {user.password}</h4>
+
         <form onSubmit={handleSubmit}>
-          <input type="text" name="name" onBlur={handleBlur} placeholder='Your Name' />
+          <input type="checkbox" onChange={() => setNewUser(!newUser)} name="newUser" id="" />
+          <label htmlFor="newUser">New User Sign up</label><br />
+          {
+            newUser && <input type="text" name="name" onBlur={handleBlur} placeholder='Your Name' />
+          }
           <br />
           <input type="text" onBlur={handleBlur} name="email" placeholder='Your email address' required /><br />
-          <p>sample : sample@gmail.com</p>
-          <br />
           <input type="password" onBlur={handleBlur} name="password" placeholder='Your Password' required /><br />
-          <p>must contain capital letter, small letter, number and length should be greater than 6</p>
           <input type="submit" value="Submit" />
         </form>
+        <p style={{ color: 'red' }}>{user.error}</p>
+        {
+          user.success && <p style={{ color: 'green' }}>Sign {newUser ? 'up' : 'in'} Success</p>
+        }
       </div>
     </>
   );
