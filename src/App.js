@@ -9,6 +9,7 @@ function App() {
     isSignIn: false,
     name: '',
     email: '',
+    password: '',
     photo: ''
   });
 
@@ -44,12 +45,29 @@ function App() {
       })
   };
 
-  const handleSubmit = () => {
-    console.log('submitted');
+  const handleSubmit = (event) => {
+    console.log(user.email, user.password);
+    if (user.email && user.password) {
+      console.log('submitting')
+    }
+    event.preventDefault();
   }
 
   const handleBlur = (event) => {
     console.log(event.target.name, event.target.value);
+    let isFieldCheck = true;
+    if (event.target.name === 'email') {
+        isFieldCheck = /\S+@\S+\.\S+/.test(event.target.value);
+    };
+    if (event.target.name === 'password') {
+       isFieldCheck = /(?=.*[a-zA-Z])(?=.{8,})/.test(event.target.value);
+      // must contain Capital and small letter and length should be greater than 8  
+    };
+    if (isFieldCheck) {
+      const newUserInfo = { ...user };
+      newUserInfo[event.target.name] = event.target.value;
+      setUser(newUserInfo);
+    }
   }
   return (
     <>
@@ -69,12 +87,20 @@ function App() {
           </>
         )
       }
-      </div>
+      </div> <br /><br />
 
-      <div >
+      <div className='form-section'>
+        <h4>Name: {user.name}</h4>
+        <h4>Email: {user.email}</h4>
+        <h4> Password : {user.password}</h4>
         <form onSubmit={handleSubmit}>
-          <input type="text" onBlur={handleBlur} name="email" placeholder='Your email address'  required/>
-          <input type="password" onBlur={handleBlur} name="password" id="" placeholder='Your Password' required />
+          <input type="text" name="name" onBlur={handleBlur} placeholder='Your Name' />
+          <br />
+          <input type="text" onBlur={handleBlur} name="email" placeholder='Your email address' required /><br />
+          <p>sample : sample@gmail.com</p>
+          <br />
+          <input type="password" onBlur={handleBlur} name="password" placeholder='Your Password' required /><br />
+          <p>must contain capital letter, small letter, number and length should be greater than 6</p>
           <input type="submit" value="Submit" />
         </form>
       </div>
