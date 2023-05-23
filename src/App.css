@@ -1,0 +1,19 @@
+.signIn-signOut {
+  text-align: center;
+  margin-top: 20px;
+}
+button{
+  padding: 10px;
+  font-size: large;
+  background-color: blue;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid gray;
+}
+/* h2 .photo-text{
+  text-align: center;
+  color: red;
+} */
+.signIn-signOut img{
+  width: 20%;
+}
